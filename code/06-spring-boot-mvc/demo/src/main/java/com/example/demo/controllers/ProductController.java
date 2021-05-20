@@ -21,7 +21,7 @@ public class ProductController {
 
     @GetMapping("/")
     public String viewHomePage(Model model) {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findTop3ByOrderByNameAsc();
         model.addAttribute("products", products);
         return "products";
     }
