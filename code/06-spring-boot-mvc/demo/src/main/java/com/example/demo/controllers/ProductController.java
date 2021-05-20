@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ProductController {
@@ -22,6 +24,20 @@ public class ProductController {
         List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
         return "products";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable(name = "id") long id) {
+        productRepository.deleteById(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/edit/{id}")
+    public ModelAndView showEditProductPage(@PathVariable(name = "id") long id) {
+        ModelAndView modelAndView = new ModelAndView("edit-product");
+        Product product = productRepository.findById(id).get();
+        modelAndView.addObject("product", product);
+        return modelAndView;
     }
 
     @GetMapping("/new")
