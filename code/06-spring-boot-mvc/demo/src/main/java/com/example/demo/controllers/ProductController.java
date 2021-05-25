@@ -1,6 +1,9 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import javax.validation.Valid;
 
 import com.example.demo.entities.Product;
 import com.example.demo.repositories.ProductRepository;
@@ -8,6 +11,8 @@ import com.example.demo.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +23,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
+
+    /*
+     * MAPPINGS
+     */
 
     @GetMapping("/")
     public String viewHomePage(Model model) {
@@ -30,6 +39,24 @@ public class ProductController {
     public String deleteProduct(@PathVariable(name = "id") long id) {
         productRepository.deleteById(id);
         return "redirect:/";
+    }
+
+    @PostMapping("/edit")
+    public ModelAndView editProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (product.getId() == null || productRepository.findById(product.getId()).isEmpty()) {
+            throw new NoSuchElementException("Product with id: " + product.getId() + " does not exist.");
+        }
+
+        if (result.hasErrors()) {
+            modelAndView.setViewName("edit-product");
+            return modelAndView;
+        }
+
+        modelAndView.setViewName("redirect:/");
+        productRepository.save(product);
+        return modelAndView;
     }
 
     @GetMapping("/edit/{id}")
@@ -51,5 +78,16 @@ public class ProductController {
     public String saveProduct(@ModelAttribute("product") Product product) {
         productRepository.save(product);
         return "redirect:/";
+    }
+
+    /*
+     * EXCEPTION HANDLERS
+     */
+
+    @ExceptionHandler({ Exception.class })
+    public ModelAndView handleException(Exception ex) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("exception", ex.getMessage());
+        return modelAndView;
     }
 }

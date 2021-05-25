@@ -12,7 +12,7 @@
   </head>
   <body>
     <h1>Edit product</h1>
-    <form th:action="@{/save}" th:object="${product}" method="post">
+    <form th:action="@{/edit}" th:object="${product}" method="post">
       Product ID:<br />
       <input type="text" th:field="*{id}" readonly="readonly" /><br />
 
