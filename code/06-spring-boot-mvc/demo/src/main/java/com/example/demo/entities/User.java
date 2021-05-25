@@ -5,10 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.Transient;
 
 @Entity
 @Table(name = "user")
@@ -18,11 +18,11 @@ public class User {
     private Long id;
 
     @Length(min = 5, message = "* Your username must have at least 5 characters")
-    @NotEmpty(message = "*Please provide a username")
+    @NotEmpty(message = "* Please provide a username")
     private String username;
 
     @Length(min = 5, message = "* Your password must have at least 5 characters")
-    @NotEmpty(message = "*Please provide a password")
+    @NotEmpty(message = "* Please provide a password")
     private String password;
 
     @Transient

@@ -76,6 +76,23 @@ public class ProductController {
         return modelAndView;
     }
 
+    @GetMapping("/login")
+    public String login(Model model, String error, String logout) {
+        if (securityService.isAuthenticated()) {
+            return "redirect:/";
+        }
+
+        if (error != null) {
+            model.addAttribute("error", "Your username or password is invalid.");
+        }
+
+        if (logout != null) {
+            model.addAttribute("message", "you have been logged out successfully.");
+        }
+
+        return "login";
+    }
+
     @GetMapping("/new")
     public String showNewProductPage(Model model) {
         Product product = new Product();

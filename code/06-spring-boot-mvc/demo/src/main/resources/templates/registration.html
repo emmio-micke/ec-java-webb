@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <form
+        method="POST"
+        class="form-signin"
+        th:object="${userForm}"
+        th:action="@{/registration}"
+      >
+        <h2 class="form-signin-heading">Create your account</h2>
+        <div class="form-group">
+          <input
+            type="text"
+            th:field="*{username}"
+            class="form-control"
+            placeholder="Username"
+            autofocus="true"
+          />
+          <span
+            class="has-error"
+            th:if="${#fields.hasErrors('username')}"
+            th:errors="*{username}"
+          ></span>
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            th:field="*{password}"
+            class="form-control"
+            placeholder="Password"
+          />
+          <span
+            class="has-error"
+            th:if="${#fields.hasErrors('password')}"
+            th:errors="*{password}"
+          ></span>
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            th:field="*{passwordConfirm}"
+            class="form-control"
+            placeholder="Confirm your password"
+          />
+          <span
+            class="has-error"
+            th:if="${#fields.hasErrors('passwordConfirm')}"
+            th:errors="*{passwordConfirm}"
+          ></span>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
