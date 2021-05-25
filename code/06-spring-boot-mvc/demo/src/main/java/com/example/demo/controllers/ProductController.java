@@ -6,7 +6,10 @@ import java.util.NoSuchElementException;
 import javax.validation.Valid;
 
 import com.example.demo.entities.Product;
+import com.example.demo.entities.User;
 import com.example.demo.repositories.ProductRepository;
+import com.example.demo.service.SecurityService;
+import com.example.demo.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +26,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
 
     /*
      * MAPPINGS
@@ -74,7 +83,37 @@ public class ProductController {
         return "new-product";
     }
 
-    @PostMapping(value = "/save")
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        if (securityService.isAuthenticated()) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("userForm", new User());
+
+        return "registration";
+    }
+
+    @PostMapping("/registration")
+    public String registration(@Valid @ModelAttribute("userForm") User userForm, BindingResult bindingResult) {
+        User userExists = userService.findByUsername(userForm.getUsername());
+
+        if (userExists != null) {
+            bindingResult.rejectValue("username", "error.user",
+                    "There already is a user registered with that username.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "registration";
+        }
+
+        userService.save(userForm);
+        securityService.autoLogin(userForm.getUsername(), userForm.getPasswordConfirm());
+
+        return "redirect:/";
+    }
+
+    @PostMapping("/save")
     public String saveProduct(@ModelAttribute("product") Product product) {
         productRepository.save(product);
         return "redirect:/";
