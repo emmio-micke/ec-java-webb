@@ -22,6 +22,19 @@
     <div class="container-fluid">
       <h1>Hello Spring Boot</h1>
       <a href="new" class="btn btn-primary">Add new product</a>
+      <a
+        onclick="document.forms['logoutform'].submit()"
+        class="nav-item nav-link"
+        >Logout</a
+      >
+
+      <div>
+        Items In Cart
+        <span th:text="${cart.size()}"></span>
+      </div>
+
+      <form id="logoutform" method="POST" action="/logout"></form>
+
       <hr />
       <table class="table">
         <thead>
@@ -52,6 +65,17 @@
                 th:href="@{'/delete/' + ${product.id}}"
                 >Delete</a
               >
+              &nbsp;&nbsp;&nbsp;
+              <form
+                style="display: inline"
+                action="#"
+                th:action="@{'/addToCart/' + ${product.id}}"
+                method="post"
+              >
+                <button class="btn btn-info btn-sm" type="submit">
+                  Add To Cart
+                </button>
+              </form>
             </td>
           </tr>
         </tbody>

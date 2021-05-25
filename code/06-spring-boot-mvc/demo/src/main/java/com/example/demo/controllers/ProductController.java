@@ -1,7 +1,9 @@
 package com.example.demo.controllers;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -20,9 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@SessionAttributes("cart")
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
@@ -42,6 +46,17 @@ public class ProductController {
         List<Product> products = productRepository.findTop3ByOrderByNameAsc();
         model.addAttribute("products", products);
         return "products";
+    }
+
+    @PostMapping("/addToCart/{id}")
+    public String addToCart(@PathVariable(name = "id") Long id, @ModelAttribute("cart") Set<Product> cart) {
+        Product product = productRepository.findById(id).get();
+        boolean isItemPresent = cart.stream().anyMatch(item -> item.getId() == product.getId());
+        if (!isItemPresent) {
+            cart.add(product);
+        }
+
+        return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
@@ -145,5 +160,14 @@ public class ProductController {
         ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("exception", ex.getMessage());
         return modelAndView;
+    }
+
+    /*
+     * OTHER
+     */
+
+    @ModelAttribute("cart")
+    public Set<Product> initializeCart() {
+        return new HashSet<>();
     }
 }
